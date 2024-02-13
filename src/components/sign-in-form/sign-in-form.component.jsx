@@ -1,7 +1,6 @@
 import { useState } from "react";
 
 import {
-  createUserDocument,
   signInAuthUserWithEmailAndPassword,
   signInWithGooglePopup,
 } from "../../utils/firebase/firebase.utils";
@@ -19,9 +18,12 @@ const SignInForm = () => {
   const [formFields, setFormFields] = useState(defaultFormFields);
   const { email, password } = formFields;
 
+  const resetFormFields = () => {
+    setFormFields(defaultFormFields);
+  };
+
   const logGoogleUser = async () => {
-    const { user } = await signInWithGooglePopup();
-    await createUserDocument(user);
+    await signInWithGooglePopup();
   };
 
   const handleChange = (event) => {
@@ -33,11 +35,12 @@ const SignInForm = () => {
     event.preventDefault();
 
     try {
-      const { user } = await signInAuthUserWithEmailAndPassword(
+      await signInAuthUserWithEmailAndPassword(
         email,
         password,
       );
-      console.log(user);
+
+      resetFormFields();
     } catch (error) {
       if (error.code === "auth/invalid-credential") {
         alert("Invalid credentials");
