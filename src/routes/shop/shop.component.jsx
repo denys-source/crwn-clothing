@@ -4,8 +4,7 @@ import { Route, Routes } from "react-router-dom";
 
 import CategoriesPreview from "../../components/categories-preview/categories-preview.component";
 import Category from "../../components/category/category.component";
-import { setCategories } from "../../store/categories/categories.actions";
-import { getCollectionDocuments } from "../../utils/firebase/firebase.utils";
+import { fetchCategoriesAsync } from "../../store/categories/categories.actions";
 
 import "./shop.styles.scss";
 
@@ -13,11 +12,7 @@ const Shop = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const getCategoriesMap = async () => {
-      const categoriesArray = await getCollectionDocuments("category");
-      dispatch(setCategories(categoriesArray));
-    };
-    getCategoriesMap();
+    dispatch(fetchCategoriesAsync());
   }, []);
 
   return (
