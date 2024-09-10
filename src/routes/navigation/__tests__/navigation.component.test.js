@@ -1,5 +1,6 @@
-import { screen } from "@testing-library/react";
+import { fireEvent, screen } from "@testing-library/react";
 
+import * as firebaseUtils from "../../../utils/firebase/firebase.utils";
 import { renderWithProviders } from "../../../utils/test/test.utils";
 import Navigation from "../navigation.component";
 
@@ -61,5 +62,21 @@ describe("Navigation tests", () => {
 
     const dropdownCheckoutButton = screen.getByText(/go to checkout/i);
     expect(dropdownCheckoutButton).toBeInTheDocument();
+  });
+
+  test("should trigger signOutAuthUser when log out button is clicked", () => {
+    const spy = jest.spyOn(firebaseUtils, "signOutAuthUser").mockReturnValue();
+    const preloadedState = {
+      user: {
+        currentUser: {},
+      },
+    };
+    renderWithProviders(<Navigation />, { preloadedState });
+
+    const logOutButton = screen.getByText(/log out/i);
+    expect(logOutButton).toBeInTheDocument();
+
+    fireEvent.click(logOutButton);
+    expect(spy).toHaveBeenCalled();
   });
 });
