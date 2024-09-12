@@ -1,6 +1,6 @@
 import { CATEGORIES_ACTION_TYPES } from "./categories.types";
 
-const INITIAL_STATE = {
+export const INITIAL_STATE = {
   categories: [],
   isLoading: false,
   error: null,
