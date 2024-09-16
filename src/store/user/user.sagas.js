@@ -1,5 +1,6 @@
 import { all, call, put, takeLatest } from "redux-saga/effects";
 import {
+  createAuthUserWithEmailAndPassword,
   createUserDocument,
   getCurrentUser,
   signInAuthUserWithEmailAndPassword,
@@ -11,6 +12,9 @@ import {
   googleSignInStart,
   signInFailed,
   signInSuccess,
+  signUpFailed,
+  signUpStart,
+  signUpSuccess,
 } from "./user.reducer";
 
 function* getSnapshotFromUserAuth(userAuth, additionalOptions) {
@@ -49,6 +53,29 @@ function* signInWithEmail(action) {
   }
 }
 
+function* signInAfterSignUp(action) {
+  try {
+    const { user, additionalOptions } = action.payload;
+    yield call(getSnapshotFromUserAuth, user, additionalOptions);
+  } catch (error) {
+    yield put(signInFailed(error));
+  }
+}
+
+function* signUpUser(action) {
+  try {
+    const { email, password, displayName } = action.payload;
+    const { user } = yield call(
+      createAuthUserWithEmailAndPassword,
+      email,
+      password,
+    );
+    yield put(signUpSuccess({ user, additionalOptions: { displayName } }));
+  } catch (error) {
+    yield put(signUpFailed(error));
+  }
+}
+
 function* isCurrentUserAuthenticated() {
   try {
     const authUser = yield call(getCurrentUser);
@@ -68,6 +95,14 @@ function* onEmailSignInStart() {
   yield takeLatest(emailSignInStart.type, signInWithEmail);
 }
 
+function* onSignUpSuccess() {
+  yield takeLatest(signUpSuccess.type, signInAfterSignUp);
+}
+
+function* onSignUpStart() {
+  yield takeLatest(signUpStart.type, signUpUser);
+}
+
 function* onCheckCurrentUser() {
   yield takeLatest(checkCurrentUser.type, isCurrentUserAuthenticated);
 }
@@ -77,5 +112,7 @@ export function* userSagas() {
     call(onCheckCurrentUser),
     call(onGoogleSignInStart),
     call(onEmailSignInStart),
+    call(onSignUpStart),
+    call(onSignUpSuccess),
   ]);
 }

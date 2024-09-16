@@ -25,6 +25,15 @@ const userSlice = createSlice({
     signInFailed(state, action) {
       state.error = action.payload;
     },
+    signUpStart(state, action) {
+      return state;
+    },
+    signUpSuccess(state, action) {
+      return state;
+    },
+    signUpFailed(state, action) {
+      state.error = action.payload;
+    },
   },
 });
 
@@ -33,6 +42,9 @@ export const {
   googleSignInStart,
   emailSignInStart,
   signInFailed,
+  signUpStart,
+  signUpSuccess,
+  signUpFailed,
   checkCurrentUser,
 } = userSlice.actions;
 export const userReducer = userSlice.reducer;
