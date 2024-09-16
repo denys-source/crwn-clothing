@@ -5,6 +5,7 @@ import {
   getCurrentUser,
   signInAuthUserWithEmailAndPassword,
   signInWithGooglePopup,
+  signOutAuthUser,
 } from "../../utils/firebase/firebase.utils";
 import {
   checkCurrentUser,
@@ -12,6 +13,9 @@ import {
   googleSignInStart,
   signInFailed,
   signInSuccess,
+  signOutFailed,
+  signOutStart,
+  signOutSuccess,
   signUpFailed,
   signUpStart,
   signUpSuccess,
@@ -76,6 +80,15 @@ function* signUpUser(action) {
   }
 }
 
+function* signOutUser() {
+  try {
+    yield call(signOutAuthUser);
+    yield put(signOutSuccess());
+  } catch (error) {
+    yield put(signOutFailed(error));
+  }
+}
+
 function* isCurrentUserAuthenticated() {
   try {
     const authUser = yield call(getCurrentUser);
@@ -103,6 +116,10 @@ function* onSignUpStart() {
   yield takeLatest(signUpStart.type, signUpUser);
 }
 
+function* onSignOutStart() {
+  yield takeLatest(signOutStart.type, signOutUser);
+}
+
 function* onCheckCurrentUser() {
   yield takeLatest(checkCurrentUser.type, isCurrentUserAuthenticated);
 }
@@ -114,5 +131,6 @@ export function* userSagas() {
     call(onEmailSignInStart),
     call(onSignUpStart),
     call(onSignUpSuccess),
+    call(onSignOutStart),
   ]);
 }
