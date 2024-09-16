@@ -1,8 +1,19 @@
 import { fireEvent, screen } from "@testing-library/react";
 
-import * as firebaseUtils from "../../../utils/firebase/firebase.utils";
 import { renderWithProviders } from "../../../utils/test/test.utils";
+import { signOutStart } from "../../../store/user/user.reducer";
 import Navigation from "../navigation.component";
+
+const mockDispatch = jest.fn();
+
+jest.mock("react-redux", () => ({
+  ...jest.requireActual("react-redux"),
+  useDispatch: () => mockDispatch,
+}));
+
+beforeEach(() => {
+  mockDispatch.mockReset();
+});
 
 describe("Navigation tests", () => {
   test("should render sign in and not log out for unauthenticated user", () => {
@@ -64,8 +75,7 @@ describe("Navigation tests", () => {
     expect(dropdownCheckoutButton).toBeInTheDocument();
   });
 
-  test("should trigger signOutAuthUser when log out button is clicked", () => {
-    const spy = jest.spyOn(firebaseUtils, "signOutAuthUser").mockReturnValue();
+  test("should dispatch signOutStart action when log out button is clicked", () => {
     const preloadedState = {
       user: {
         currentUser: {},
@@ -77,6 +87,6 @@ describe("Navigation tests", () => {
     expect(logOutButton).toBeInTheDocument();
 
     fireEvent.click(logOutButton);
-    expect(spy).toHaveBeenCalled();
+    expect(mockDispatch).toHaveBeenCalledWith(signOutStart());
   });
 });
