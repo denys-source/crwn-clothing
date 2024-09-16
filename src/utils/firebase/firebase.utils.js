@@ -53,7 +53,7 @@ export const createUserDocument = async (user, additionalOptions = {}) => {
     }
   }
 
-  return userDocRef;
+  return userDocSnapshot;
 };
 
 export const addCollectionAndDocuments = async (
@@ -102,4 +102,13 @@ export const signOutAuthUser = async () => {
 
 export const onAuthStateChangedObserver = (callback) => {
   onAuthStateChanged(auth, callback);
+};
+
+export const getCurrentUser = () => {
+  return new Promise((resolve) => {
+    const unsubscribe = onAuthStateChanged(auth, (authUser) => {
+      unsubscribe();
+      resolve(authUser);
+    });
+  });
 };
