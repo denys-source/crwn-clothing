@@ -7,7 +7,7 @@ import {
 } from "./categories.actions";
 import { CATEGORIES_ACTION_TYPES } from "./categories.types";
 
-function* fetchCategoriesAsync() {
+export function* fetchCategoriesAsync() {
   try {
     const categoriesArray = yield call(getCollectionDocuments, "category");
     yield put(fetchCategoriesSuccess(categoriesArray));
@@ -16,7 +16,7 @@ function* fetchCategoriesAsync() {
   }
 }
 
-function* onFetchCategories() {
+export function* onFetchCategories() {
   yield takeLatest(
     CATEGORIES_ACTION_TYPES.FETCH_CATEGORIES_START,
     fetchCategoriesAsync,
