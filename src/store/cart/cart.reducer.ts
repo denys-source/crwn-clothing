@@ -1,6 +1,18 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-const addCartItemHelper = (cartItems, productToAdd) => {
+import { CategoryItem } from "../categories/categories.types";
+
+
+export type CartItem = CategoryItem & {
+  quantity: number;
+}
+
+export type CartState = {
+  readonly cartIsOpen: boolean;
+  readonly cartItems: CartItem[];
+}
+
+const addCartItemHelper = (cartItems: CartItem[], productToAdd: CategoryItem): CartItem[] => {
   const existingCartItem = cartItems.find(
     (item) => item.id === productToAdd.id,
   );
@@ -15,7 +27,7 @@ const addCartItemHelper = (cartItems, productToAdd) => {
   return [...cartItems, { ...productToAdd, quantity: 1 }];
 };
 
-const removeCartItemHelper = (cartItems, productToRemove) => {
+const removeCartItemHelper = (cartItems: CartItem[], productToRemove: CartItem): CartItem[] => {
   return cartItems
     .map((item) =>
       item.id === productToRemove.id && item.quantity
@@ -25,11 +37,11 @@ const removeCartItemHelper = (cartItems, productToRemove) => {
     .filter((item) => item.quantity);
 };
 
-const removeCartProductHelper = (cartItems, productToRemove) => {
+const removeCartProductHelper = (cartItems: CartItem[], productToRemove: CartItem): CartItem[] => {
   return cartItems.filter((item) => item.id !== productToRemove.id);
 };
 
-const INITIAL_STATE = {
+const INITIAL_STATE: CartState = {
   cartIsOpen: false,
   cartItems: [],
 };
@@ -38,16 +50,16 @@ const cartSlice = createSlice({
   name: "cart",
   initialState: INITIAL_STATE,
   reducers: {
-    setCartIsOpen(state, action) {
+    setCartIsOpen(state, action: PayloadAction<boolean>) {
       state.cartIsOpen = action.payload;
     },
-    addCartItem(state, action) {
+    addCartItem(state, action: PayloadAction<CategoryItem>) {
       state.cartItems = addCartItemHelper(state.cartItems, action.payload);
     },
-    removeCartItem(state, action) {
+    removeCartItem(state, action: PayloadAction<CartItem>) {
       state.cartItems = removeCartItemHelper(state.cartItems, action.payload);
     },
-    removeCartProduct(state, action) {
+    removeCartProduct(state, action: PayloadAction<CartItem>) {
       state.cartItems = removeCartProductHelper(
         state.cartItems,
         action.payload,
