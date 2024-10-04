@@ -1,6 +1,14 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { User } from "firebase/auth"
 
-const INITIAL_VALUE = {
+
+export type UserState = {
+  readonly currentUser: User | null;
+  readonly isLoading: boolean;
+  readonly error: Error | null;
+}
+
+const INITIAL_VALUE: UserState = {
   currentUser: null,
   isLoading: false,
   error: null,
@@ -10,37 +18,37 @@ const userSlice = createSlice({
   name: "user",
   initialState: INITIAL_VALUE,
   reducers: {
-    checkCurrentUser(state, action) {
+    checkCurrentUser(state) {
       return state;
     },
-    signInSuccess(state, action) {
+    signInSuccess(state, action: PayloadAction<User>) {
       state.currentUser = action.payload;
     },
-    googleSignInStart(state, action) {
+    googleSignInStart(state) {
       return state;
     },
-    emailSignInStart(state, action) {
+    emailSignInStart(state) {
       return state;
     },
-    signInFailed(state, action) {
+    signInFailed(state, action: PayloadAction<Error>) {
       state.error = action.payload;
     },
-    signUpStart(state, action) {
+    signUpStart(state) {
       return state;
     },
-    signUpSuccess(state, action) {
+    signUpSuccess(state) {
       return state;
     },
-    signUpFailed(state, action) {
+    signUpFailed(state, action: PayloadAction<Error>) {
       state.error = action.payload;
     },
-    signOutStart(state, action) {
+    signOutStart(state) {
       return state;
     },
-    signOutSuccess(state, action) {
+    signOutSuccess(state) {
       state.currentUser = null;
     },
-    signOutFailed(state, action) {
+    signOutFailed(state, action: PayloadAction<Error>) {
       state.error = action.payload;
     },
   },
