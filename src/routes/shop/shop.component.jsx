@@ -13,7 +13,7 @@ const Shop = () => {
 
   useEffect(() => {
     dispatch(fetchCategoriesStart());
-  }, []);
+  });
 
   return (
     <div className="shop-container">
